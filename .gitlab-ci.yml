@@ -1,0 +1,31 @@
+image: docker:latest
+
+services:
+  - docker:dind
+
+stages:
+  - build
+
+variables:
+  IMAGE_TAG: $CI_COMMIT_SHORT_SHA
+
+before_script:
+  - apk add --no-cache python3 py3-pip
+  - pip install awscli
+  - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $ECR_REGISTRY
+
+build-backend:
+  stage: build
+  script:
+    - docker build -t $ECR_REGISTRY/gas-booking-backend:$IMAGE_TAG -f docker/backend/Dockerfile .
+    - docker push $ECR_REGISTRY/gas-booking-backend:$IMAGE_TAG
+  only:
+    - develop
+
+build-frontend:
+  stage: build
+  script:
+    - docker build -t $ECR_REGISTRY/gas-booking-frontend:$IMAGE_TAG -f docker/frontend/Dockerfile .
+    - docker push $ECR_REGISTRY/gas-booking-frontend:$IMAGE_TAG
+  only:
+    - develop
