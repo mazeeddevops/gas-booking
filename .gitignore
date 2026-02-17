@@ -1,0 +1,17 @@
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.*
+.terraform.lock.hcl
+
+# Keys
+*.pem
+
+# Node
+node_modules/
+
+# Env
+.env
+# AWS keys
+Accesskeys/
+*.csv
